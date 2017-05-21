@@ -54,8 +54,8 @@ class RdRanks():
         """
         
         # determine if count is a scalar or vectors
-        taxon = ranks_below_taxon.keys()[0]
-        rank_prefix = ranks_below_taxon[taxon].keys()[0]
+        taxon = list(ranks_below_taxon.keys())[0]
+        rank_prefix = list(ranks_below_taxon[taxon].keys())[0]
         count = ranks_below_taxon[taxon][rank_prefix]
         
         count_is_scalar = True
@@ -148,7 +148,7 @@ class RdRanks():
             # determine ranks
             for n in cur_tree.postorder_node_iter(lambda n: n != tree.seed_node):
                 ranks = []
-                for rank_prefix, threshold in rd_thresholds.iteritems():
+                for rank_prefix, threshold in rd_thresholds.items():
                     if n.rel_dist >= threshold and n.parent_node.rel_dist < threshold:
                         ranks.append(rank_prefix.capitalize() + '__')
                         
@@ -193,7 +193,7 @@ class RdRanks():
                     # used for rooting
                     continue
                     
-                for rank, count in ranks_below_taxon[taxon].iteritems():
+                for rank, count in ranks_below_taxon[taxon].items():
                     overall_ranks_below_taxon[taxon][rank].append(count)
                             
             results_table = os.path.join(phylum_dir, 'rd_ranks.tsv')

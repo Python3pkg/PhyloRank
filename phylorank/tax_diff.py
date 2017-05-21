@@ -78,8 +78,8 @@ class TaxDiff():
         # determine order of ranks to examine in order
         # to first identify 'more specific' and then
         # 'more general' label changes
-        rank_order = [r for r in xrange(cur_rank-1, -1, -1)]
-        rank_order += [r for r in xrange(cur_rank+1, len(Taxonomy.rank_prefixes))]
+        rank_order = [r for r in range(cur_rank-1, -1, -1)]
+        rank_order += [r for r in range(cur_rank+1, len(Taxonomy.rank_prefixes))]
      
         # check if taxon has been moved up or down in rank
         # as determined by removing suffix characters and 
@@ -92,13 +92,13 @@ class TaxDiff():
             old_rank_prefix = Taxonomy.rank_prefixes[old_rank]
             cur_suffix = self.rank_suffices[cur_rank]
             old_suffix = self.rank_suffices[old_rank]
-            for i in xrange(1, max([len(s) for s in self.rank_suffices]) + 1): # eat taxon name
+            for i in range(1, max([len(s) for s in self.rank_suffices]) + 1): # eat taxon name
                 if i == 0:
                     modified_taxon = taxon[3:]
                 else:
                     modified_taxon = taxon[3:-i]
                     
-                for j in xrange(0, len(old_suffix)): # eat suffix
+                for j in range(0, len(old_suffix)): # eat suffix
                     old_taxon = old_rank_prefix + modified_taxon + old_suffix[j:]
                     if old_taxon in taxa_at_rank[old_rank]:
                         return old_taxon, old_rank
@@ -115,13 +115,13 @@ class TaxDiff():
         # check if taxon name has been corrected
         for old_rank, old_suffix in enumerate(self.rank_suffices):
             # eat suffix character by character and append canonical suffix
-            for i in xrange(0, max([len(s) for s in self.rank_suffices])): # eat taxon name
+            for i in range(0, max([len(s) for s in self.rank_suffices])): # eat taxon name
                 if i == 0:
                     modified_taxon = taxon
                 else:
                     modified_taxon = taxon[0:-i]
                     
-                for j in xrange(0, len(old_suffix)): # eat suffix
+                for j in range(0, len(old_suffix)): # eat suffix
                     old_taxon = modified_taxon + old_suffix[j:]
                     if old_taxon in taxa_at_rank[cur_rank]:
                         return old_taxon
@@ -143,7 +143,7 @@ class TaxDiff():
         
         taxonomy = Taxonomy()
         named_lineages_at_rank = taxonomy.named_lineages_at_rank(tax1)
-        for rank, taxa in named_lineages_at_rank.iteritems():
+        for rank, taxa in named_lineages_at_rank.items():
             rank_label = Taxonomy.rank_labels[rank]
             if rank_label == 'species':
                 continue
@@ -159,10 +159,10 @@ class TaxDiff():
                     taxa1 = tax1[genome_id]
                     taxa2 = tax2[genome_id]
                     
-                    for cur_rank, (taxa1, taxa2) in enumerate(zip(taxa1, taxa2)):
+                    for cur_rank, (taxa1, taxa2) in enumerate(list(zip(taxa1, taxa2))):
                          row[cur_rank].append(taxa1 == taxa2)
                          
-                for cur_rank, matches in row.iteritems():
+                for cur_rank, matches in row.items():
                     if cur_rank <= rank:
                         fout.write('\t-')
                     else:
@@ -288,18 +288,18 @@ class TaxDiff():
         
         if not include_user_taxa:
             new_tax1 = {}
-            for genome_id, taxonomy in tax1.iteritems():
+            for genome_id, taxonomy in tax1.items():
                 if not genome_id.startswith('U_'):
                     new_tax1[genome_id] = taxonomy
             tax1 = new_tax1
             
             new_tax2 = {}
-            for genome_id, taxonomy in tax2.iteritems():
+            for genome_id, taxonomy in tax2.items():
                 if not genome_id.startswith('U_'):
                     new_tax2[genome_id] = taxonomy
             tax2 = new_tax2
         
-        common_taxa = set(tax1.keys()).intersection(tax2.keys())
+        common_taxa = set(tax1.keys()).intersection(list(tax2.keys()))
         
         self.logger.info('First taxonomy contains %d taxa.' % len(tax1))
         self.logger.info('Second taxonomy contains %d taxa.' % len(tax2))
@@ -321,7 +321,7 @@ class TaxDiff():
             t1 = tax1[taxa]
             t2 = tax2[taxa]
             
-            for rank, (taxon1, taxon2) in enumerate(zip(t1, t2)):
+            for rank, (taxon1, taxon2) in enumerate(list(zip(t1, t2))):
                 if taxon1 == taxon2:
                     unchanged[rank] += 1
                 elif taxon1 != Taxonomy.rank_prefixes[rank] and taxon2 != Taxonomy.rank_prefixes[rank]:
@@ -341,8 +341,8 @@ class TaxDiff():
         
         fout = open(output_table, 'w')
         fout.write('Rank\tUnchanged\tUnchanged (%)\tActive\t Active (%)\tPassive\tPassive (%)\tUnresolved\tUnresolved (%)\n')
-        print 'Rank\tUnchanged\tActive\tPassive\tUnresolved\tTotal'
-        for rank in xrange(0, len(Taxonomy.rank_prefixes)):
+        print('Rank\tUnchanged\tActive\tPassive\tUnresolved\tTotal')
+        for rank in range(0, len(Taxonomy.rank_prefixes)):
             total = unchanged[rank] + active_change[rank] + passive_change[rank] + unresolved_change[rank]
             if total != 0:
                 fout.write('%s\t%d\t%.1f\t%d\t%.1f\t%d\t%.1f\t%d\t%.1f\n' %
@@ -351,12 +351,12 @@ class TaxDiff():
                                     active_change[rank], active_change[rank] * 100.0 / total,
                                     passive_change[rank], passive_change[rank] * 100.0 / total,
                                     unresolved_change[rank], unresolved_change[rank] * 100.0 / total))
-                print '%s\t%d\t%d\t%d\t%d\t%d' % (Taxonomy.rank_labels[rank],
+                print('%s\t%d\t%d\t%d\t%d\t%d' % (Taxonomy.rank_labels[rank],
                                                     unchanged[rank],
                                                     active_change[rank],
                                                     passive_change[rank],
                                                     unresolved_change[rank],
-                                                    total)
+                                                    total))
                                 
             
                     

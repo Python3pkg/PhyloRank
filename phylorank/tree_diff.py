@@ -121,7 +121,7 @@ class TreeDiff():
         incongruent_taxa = defaultdict(list)     # node supported in both trees, but have different extant taxa
         unresolved_taxa = defaultdict(list)      # supported node in one tree is not present and/or well support in the other tree
 
-        for taxon, data1 in tree1_nodes.iteritems():
+        for taxon, data1 in tree1_nodes.items():
             most_specific_taxon = taxon.split(';')[-1].strip()
             rank_index = Taxonomy.rank_prefixes.index(most_specific_taxon[0:3])
             support1, num_taxa1, node1 = data1
@@ -143,7 +143,7 @@ class TreeDiff():
                 unresolved_taxa[rank_index].append((taxon, tree1_name, support1, tree2_name, node_support2.get(taxon, -1)))
                 
         # identify unresolved taxa in tree 2
-        for taxon, data2 in tree2_nodes.iteritems():
+        for taxon, data2 in tree2_nodes.items():
             support2, num_taxa2, node2 = data1
             if taxon not in tree1_nodes:
                 unresolved_taxa[rank_index].append((taxon, tree2_name, support2, tree1_name, node_support1.get(taxon, -1)))
@@ -152,7 +152,7 @@ class TreeDiff():
         tax_diff_file = os.path.join(output_dir, 'incongruent_taxa.tsv')
         fout = open(tax_diff_file, 'w')
         fout.write('Taxon\tNo. Incongruent Taxa\tTree1 - Tree2\tTree2 - Tree1\n')
-        for taxon in Taxonomy().sort_taxa(diffs.keys()):
+        for taxon in Taxonomy().sort_taxa(list(diffs.keys())):
             num_diffs, t12_diff_str, t21_diff_str = diffs[taxon]
             fout.write('%s\t%d\t%s\t%s\n' % (taxon,
                                                 num_diffs,

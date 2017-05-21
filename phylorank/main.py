@@ -108,7 +108,7 @@ class OptionsParser():
 
         fout = open(options.output_table, 'w')
         fout.write('Taxon\tLineage\t%s\t%s\tDifference\tAbs. Difference\tChanged rank\n' % (red1_label, red2_label))
-        for taxon in Taxonomy().sort_taxa(set(red1.keys()).union(red2.keys())):
+        for taxon in Taxonomy().sort_taxa(set(red1.keys()).union(list(red2.keys()))):
             r1 = red1.get(taxon, 'NA')
             r2 = red2.get(taxon, 'NA')
             if r1 == 'NA':
@@ -126,7 +126,7 @@ class OptionsParser():
                 closest_rank = rank_label
                 closest_dist = 1e6
                 if r2 < rank_median - 0.1 or r2 > rank_median + 0.1:
-                    for rank, median_red in median_reds.iteritems():
+                    for rank, median_red in median_reds.items():
                         d = abs(r2 - median_red)
                         if d < closest_dist:
                             closest_dist = d
@@ -254,7 +254,7 @@ class OptionsParser():
 
         t = Taxonomy().read_from_tree(options.input_tree) #, False)
         if not options.no_rank_fill:
-            for taxon_id, taxa in t.iteritems():
+            for taxon_id, taxa in t.items():
                 t[taxon_id] = Taxonomy().fill_missing_ranks(taxa)
 
         Taxonomy().write(t, options.output_file)
@@ -346,7 +346,7 @@ class OptionsParser():
                 fout.write('\t-' * Taxonomy.rank_index[rank_prefix])
 
                 next_taxa = [taxon]
-                for _ in xrange(Taxonomy.rank_index[rank_prefix], Taxonomy.rank_index['s__'] + 1):
+                for _ in range(Taxonomy.rank_index[rank_prefix], Taxonomy.rank_index['s__'] + 1):
                     children_taxa = set()
                     for t in next_taxa:
                         children_taxa.update(taxon_children[t])

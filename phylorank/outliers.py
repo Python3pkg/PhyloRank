@@ -95,7 +95,7 @@ class Outliers(AbstractPlot):
         new_tree = input_tree.clone()
         
         outgroup = set()
-        for genome_id, taxa in taxonomy.iteritems():
+        for genome_id, taxa in taxonomy.items():
             if outgroup_taxa in taxa:
                 outgroup.add(genome_id)
         self.logger.info('Identifying %d genomes in the outgroup.' % len(outgroup))
@@ -176,7 +176,7 @@ class Outliers(AbstractPlot):
         
         # create normal distributions
         for i, rank in enumerate(sorted(rel_dists.keys())):
-            v = [dist for taxa, dist in rel_dists[rank].iteritems() if taxa in taxa_for_dist_inference]
+            v = [dist for taxa, dist in rel_dists[rank].items() if taxa in taxa_for_dist_inference]
             if len(v) < 2:
                 continue
                 
@@ -190,7 +190,7 @@ class Outliers(AbstractPlot):
         # create percentile and classifciation boundary lines
         percentiles = {}
         for i, rank in enumerate(sorted(rel_dists.keys())):
-            v = [dist for taxa, dist in rel_dists[rank].iteritems() if taxa in taxa_for_dist_inference]
+            v = [dist for taxa, dist in rel_dists[rank].items() if taxa in taxa_for_dist_inference]
             if len(v) == 0:
                 continue
                 
@@ -226,7 +226,7 @@ class Outliers(AbstractPlot):
             mono = []
             poly = []
             no_inference = []
-            for clade_label, dist in rel_dists[rank].iteritems():
+            for clade_label, dist in rel_dists[rank].items():
                 x.append(dist)
                 y.append(i)
                 labels.append(clade_label)
@@ -318,7 +318,7 @@ class Outliers(AbstractPlot):
         ax.set_xlim([-0.05, 1.05])
 
         ax.set_ylabel('rank (no. taxa)')
-        ax.set_yticks(xrange(0, len(rel_dists)))
+        ax.set_yticks(range(0, len(rel_dists)))
         ax.set_ylim([-0.2, len(rel_dists) - 0.01])
         ax.set_yticklabels(rank_labels)
 
@@ -354,8 +354,8 @@ class Outliers(AbstractPlot):
 
         # determine median relative distance for each rank
         median_rel_dist = {}
-        for rank, d in rel_dists.iteritems():
-            v = [dist for taxa, dist in d.iteritems() if taxa in taxa_for_dist_inference]
+        for rank, d in rel_dists.items():
+            v = [dist for taxa, dist in d.items() if taxa in taxa_for_dist_inference]
             if len(v) == 0:
                 continue
                 
@@ -365,11 +365,11 @@ class Outliers(AbstractPlot):
         fout.write('Taxa\tGTDB taxonomy\tMedian distance\tMean difference\tClosest rank\tClassification\n')
             
         for i, rank in enumerate(sorted(rel_dists.keys())):
-            for clade_label, dist in rel_dists[rank].iteritems():
+            for clade_label, dist in rel_dists[rank].items():
                 if rank in median_rel_dist:
                     delta = dist - median_rel_dist[rank]
                     closest_rank_dist = 1e10
-                    for test_rank, test_median in median_rel_dist.iteritems():
+                    for test_rank, test_median in median_rel_dist.items():
                         abs_dist = abs(dist - test_median)
                         if abs_dist < closest_rank_dist:
                             closest_rank_dist = abs_dist
@@ -411,8 +411,8 @@ class Outliers(AbstractPlot):
         
         medians_for_taxa = defaultdict(lambda: defaultdict(list))
         for p in phylum_rel_dists:
-            for rank, d in phylum_rel_dists[p].iteritems():
-                for taxon, dist in d.iteritems():
+            for rank, d in phylum_rel_dists[p].items():
+                for taxon, dist in d.items():
                     medians_for_taxa[rank][taxon].append(dist)
                     
         return medians_for_taxa
@@ -432,7 +432,7 @@ class Outliers(AbstractPlot):
     
         median_for_rank = {}
         for i, rank in enumerate(sorted(medians_for_taxa.keys())):
-                v = [np_median(dists) for taxon, dists in medians_for_taxa[rank].iteritems() if taxon in taxa_for_dist_inference]
+                v = [np_median(dists) for taxon, dists in medians_for_taxa[rank].items() if taxon in taxa_for_dist_inference]
                 
                 if v:
                     median_for_rank[rank] = np_median(v)
@@ -462,7 +462,7 @@ class Outliers(AbstractPlot):
         # create percentile and classification boundary lines
         percentiles = {}
         for i, rank in enumerate(sorted(medians_for_taxa.keys())):
-            v = [np_median(dists) for taxon, dists in medians_for_taxa[rank].iteritems() if taxon in taxa_for_dist_inference]
+            v = [np_median(dists) for taxon, dists in medians_for_taxa[rank].items() if taxon in taxa_for_dist_inference]
             if not v:
                 # not taxa at rank suitable for creating classification boundaries
                 continue
@@ -496,7 +496,7 @@ class Outliers(AbstractPlot):
             mono = []
             poly = []
             no_inference = []
-            for clade_label, dists in medians_for_taxa[rank].iteritems():
+            for clade_label, dists in medians_for_taxa[rank].items():
                 md = np_median(dists)
                 x.append(md)
                 y.append(i)
@@ -569,7 +569,7 @@ class Outliers(AbstractPlot):
         ax.set_xlim([-0.01, 1.01])
 
         ax.set_ylabel('rank (no. taxa)')
-        ax.set_yticks(xrange(0, len(medians_for_taxa)))
+        ax.set_yticks(range(0, len(medians_for_taxa)))
         ax.set_ylim([-0.2, len(medians_for_taxa) - 0.01])
         ax.set_yticklabels(rank_labels)
 
@@ -630,14 +630,14 @@ class Outliers(AbstractPlot):
             fout.write('Taxa\tGTDB taxonomy\tMedian distance\tMedian difference\tClosest rank\tClassification\n')
         
         for rank in sorted(median_for_rank.keys()):
-            for clade_label, dists in medians_for_taxa[rank].iteritems():
+            for clade_label, dists in medians_for_taxa[rank].items():
                 dists = np_array(dists)
 
                 taxon_median = np_median(dists)
                 delta = taxon_median - median_for_rank[rank]
 
                 closest_rank_dist = 1e10
-                for test_rank, test_median in median_for_rank.iteritems():
+                for test_rank, test_median in median_for_rank.items():
                     abs_dist = abs(taxon_median - test_median)
                     if abs_dist < closest_rank_dist:
                         closest_rank_dist = abs_dist
@@ -739,11 +739,11 @@ class Outliers(AbstractPlot):
 
             # remove named groups in outgroup
             children = Taxonomy().children(p, taxonomy)
-            for r in rel_dists.keys():
+            for r in list(rel_dists.keys()):
                 rel_dists[r].pop(p, None)
 
             for t in children:
-                for r in rel_dists.keys():
+                for r in list(rel_dists.keys()):
                     rel_dists[r].pop(t, None)
 
             phylum_rel_dists[phylum] = rel_dists
@@ -875,12 +875,12 @@ class Outliers(AbstractPlot):
             rel_dists = rd.rel_dist_to_named_clades(tree)
         
             # report number of taxa at each rank
-            print ''
-            print 'Rank\tTaxa to Plot\tTaxa for Inference'
-            for rank, taxa in rel_dists.iteritems():
+            print('')
+            print('Rank\tTaxa to Plot\tTaxa for Inference')
+            for rank, taxa in rel_dists.items():
                 taxa_for_inference = [x for x in taxa if x in taxa_for_dist_inference]
-                print '%s\t%d\t%d' % (Taxonomy.rank_labels[rank], len(taxa), len(taxa_for_inference))
-            print ''
+                print('%s\t%d\t%d' % (Taxonomy.rank_labels[rank], len(taxa), len(taxa_for_inference)))
+            print('')
         
             phylum_rel_dists, rel_node_dists = self.median_rd_over_phyla(tree, 
                                                                             taxa_for_dist_inference,
@@ -895,7 +895,7 @@ class Outliers(AbstractPlot):
                     self.logger.warning('Not all branches are positive after scaling.')
                 n.edge_length = rd_to_parent
 
-            for phylum, rel_dists in phylum_rel_dists.iteritems():
+            for phylum, rel_dists in phylum_rel_dists.items():
                 phylum_dir = os.path.join(output_dir, phylum)
                 if not os.path.exists(phylum_dir):
                     os.makedirs(phylum_dir)

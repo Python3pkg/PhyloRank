@@ -73,20 +73,20 @@ def filter_taxa_for_dist_inference(tree, taxonomy, trusted_taxa, min_children, m
 
     # get all named groups
     taxa_for_dist_inference = set()
-    for taxon_id, taxa in taxonomy.iteritems():
+    for taxon_id, taxa in taxonomy.items():
         for taxon in taxa:
             taxa_for_dist_inference.add(taxon)
 
     # sanity check species names as these are a common problem
     species = set()
-    for taxon_id, taxa in taxonomy.iteritems():
+    for taxon_id, taxa in taxonomy.items():
         if len(taxa) > Taxonomy.rank_index['s__']:
             species_name = taxa[Taxonomy.rank_index['s__']]
             valid, error_msg = True, None
             if species_name != 's__':
                 valid, error_msg = Taxonomy().validate_species_name(species_name, require_full=True, require_prefix=True)
             if not valid:
-                print '[Warning] Species name %s for %s is invalid: %s' % (species_name, taxon_id, error_msg)
+                print('[Warning] Species name %s for %s is invalid: %s' % (species_name, taxon_id, error_msg))
                 continue
                 
             species.add(species_name)
@@ -97,7 +97,7 @@ def filter_taxa_for_dist_inference(tree, taxonomy, trusted_taxa, min_children, m
     # this filtering criteria.
     if min_children > 0:
         valid_taxa = set()
-        for taxon, children_taxa in taxon_children.iteritems():
+        for taxon, children_taxa in taxon_children.items():
             if len(children_taxa) >= min_children:
                 valid_taxa.add(taxon)
 
@@ -123,7 +123,7 @@ def filter_taxa_for_dist_inference(tree, taxonomy, trusted_taxa, min_children, m
                 taxa_for_dist_inference.difference_update([taxon_name])
             elif not support and min_support > 0:
                 # no support value, so inform user if they were trying to filter on this property
-                print '[Error] Tree does not contain support values. As such, --min_support should be set to 0.'
+                print('[Error] Tree does not contain support values. As such, --min_support should be set to 0.')
                 continue
 
     # restrict taxa used for inferring distribution to the trusted set

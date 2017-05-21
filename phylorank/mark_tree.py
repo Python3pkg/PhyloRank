@@ -126,7 +126,7 @@ class MarkTree():
                 # calculate distance to each median threshold
                 min_dist = 1e6
                 predicted_rank = None
-                for rank, threshold in thresholds.iteritems():
+                for rank, threshold in thresholds.items():
                     d = abs(n.rel_dist - threshold)
                     if d < min_dist:
                         min_dist = d
